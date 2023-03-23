@@ -1,0 +1,23 @@
+[package]
+# Name this transports_rs so as to not conflict with the rust library
+name = "transports_rs"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+# Name this transports to match the python library
+name = "transports"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+transports = { path = "../rust", version = "*" }
+pyo3 = { version = "0.16", features = ["abi3-py37", "extension-module", "multiple-pymethods"] }
+
+[profile.release]
+panic = 'abort'
+lto = true
+
+[package.metadata.maturin]
+# python-source = "python" 
