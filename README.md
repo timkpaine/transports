@@ -1,2 +1,2 @@
-# comms
-Generic communication library
+# transports
+Generic communication library.
