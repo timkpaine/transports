@@ -85,3 +85,8 @@ jobs:
           js/junit.xml
           python/junit.xml
       if: ${{ matrix.os == 'ubuntu-latest' }}
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+

@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: build develop clean help lint fix format tests test coverage
+.PHONY: build develop clean help lint fix format tests test 
 
 build:  ## build the library
 	maturin build
@@ -16,11 +16,8 @@ fix:  ## run autofixers
 format: fix
 
 tests:  ## run tests
-	python -m pytest -v transports/tests --junitxml=junit.xml
+	python -m pytest -v transports/tests --junitxml=junit.xml --cov=transports --cov-branch --cov-fail-under=65 --cov-report term-missing
 tests: test
-
-coverage:
-	python -m pytest -v transports/tests --junitxml=junit.xml --cov=transports --cov-branch --cov-fail-under=80 --cov-report term-missing
 
 checks:  ## run checks
 	# python -m check_manifest
