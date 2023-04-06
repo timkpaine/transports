@@ -6,4 +6,4 @@ export * as wasm from "../../dist/pkg/transports";
 
 export const placeholder = "";
 
-console.log(wasm.foo());
+export const foo = () => wasm.foo();
