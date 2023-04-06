@@ -72,7 +72,7 @@ jobs:
       if: ${{ github.event_name == matrix.event-name || matrix.os == 'ubuntu-latest' }}
 
     - name: Test
-      run: make tests-ci-gha
+      run: make tests-ci
       if: ${{ matrix.os == 'ubuntu-latest' }}
 
     - name: Upload test results
@@ -85,3 +85,8 @@ jobs:
           js/junit.xml
           python/junit.xml
       if: ${{ matrix.os == 'ubuntu-latest' }}
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+

@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: dev build lint fix check tests tests-ci-run tests-ci-gha tests-ci-jenkins develop test format checks help
+.PHONY: dev build lint fix check tests tests-ci develop test format checks help
 
 dev:  ## Install required dev dependencies
 	rustup component add rustfmt
@@ -27,19 +27,16 @@ tests:  ## Run the tests
 	cargo test -- --show-output
 	# cargo test -- -Z unstable-options --format json | cargo2junit > junit.xml
 
-tests-ci-run: $(eval SHELL:=/bin/bash)
+tests-ci: $(eval SHELL:=/bin/bash)
 	{ \
 		export CARGO_INCREMENTAL=0;\
 		export RUSTDOCFLAGS="-Cpanic=abort";\
 		export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort";\
 		cargo test -- -Z unstable-options --format json | cargo2junit > junit.xml;\
+	  grcov . --llvm -s . -t cobertura --branch --ignore-not-existing -o ./coverage.xml;\
 	}
 
-tests-ci-gha: tests-ci-run
-	grcov . --llvm -s . -t lcov --branch --ignore-not-existing -o ./coverage.info;\
 
-tests-ci-jenkins: tests-ci-run
-	grcov . --llvm -s . -t cobertura --branch --ignore-not-existing -o ./coverage.xml;\
 
 # aliases
 develop: dev
