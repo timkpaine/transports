@@ -1,0 +1,23 @@
+[package]
+# Name this transports_js so as to not conflict with the rust library
+name = "transports_js"
+version = "0.1.0"
+edition = "2021"
+publish = false
+keywords = ["experimental"]
+include = ["src/**/*", "Cargo.toml", "package.json"]
+
+[lib]
+# Name this transports to match the js library
+name = "transports"
+path = "src/rust/lib.rs"
+crate-type = ["cdylib"]
+
+
+[dependencies]
+transports = { path = "../rust", version = "*" }
+wasm-bindgen = "0.2.84"
+
+[profile.release]
+panic = 'abort'
+lto = true
