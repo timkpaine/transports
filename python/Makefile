@@ -16,7 +16,7 @@ fix:  ## run autofixers
 format: fix
 
 tests:  ## run tests
-	python -m pytest -v transports/tests --junitxml=junit.xml --cov=transports --cov-branch --cov-fail-under=65 --cov-report term-missing
+	python -m pytest -v transports/tests --junitxml=junit.xml --cov=transports --cov-branch --cov-fail-under=65 --cov-report term-missing --cov-report xml
 tests: test
 
 checks:  ## run checks
