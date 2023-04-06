@@ -20,7 +20,7 @@ tests:  ## run tests
 tests: test
 
 coverage:
-	python -m pytest -v transports/tests --junitxml=junit.xml --cov=tranforms --cov-branch --cov-fail-under=80 --cov-report term-missing
+	python -m pytest -v transports/tests --junitxml=junit.xml --cov=transports --cov-branch --cov-fail-under=80 --cov-report term-missing
 
 checks:  ## run checks
 	# python -m check_manifest
