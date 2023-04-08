@@ -1,5 +1,5 @@
 {
-  "name": "transports",
+  "name": "@transports/base",
   "version": "0.1.1",
   "description": "Generic communication library",
   "repository": "git@github.com:timkpaine/transports.git",
@@ -21,7 +21,7 @@
     "setup": "cargo install -f wasm-bindgen-cli",
     "build:rust": "cargo build --release --all-features --target wasm32-unknown-unknown",
     "build:wasm-bindgen": "wasm-bindgen target/wasm32-unknown-unknown/release/transports.wasm --out-dir ./dist/pkg --target web",
-    "build:esbuild": "esbuild src/js/transports.js --bundle --format=esm --outdir=dist/esm",
+    "build:esbuild": "esbuild src/js/index.js --bundle --format=esm --outdir=dist/esm",
     "build": "npm-run-all build:*",
     "clean": "rimraf dist lib",
     "fix:js": "yarn lint:js --fix",

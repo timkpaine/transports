@@ -26,6 +26,7 @@ keywords = []
 dependencies = [
     "aiohttp",
     "aiostream",
+    "bigbrother",
     "orjson",
     "pydantic",
     "starlette",
