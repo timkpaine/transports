@@ -1,4 +1,4 @@
-import { placeholder, foo} from "../src/js/transports";
+import { placeholder, foo} from "../src/js/index";
 import { initSync } from "../dist/pkg/transports";
 import fs from "fs";
 
