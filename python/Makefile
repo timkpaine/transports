@@ -1,8 +1,21 @@
 .DEFAULT_GOAL := help
 .PHONY: build develop clean help lint fix format tests test 
 
+UNAME := $(shell uname)
+ifeq ($(UNAME), Darwin)
+	_CP_COMMAND := cp target/debug/libtransports.dylib transports/transports.abi3.so
+else
+	_CP_COMMAND := cp target/debug/libtransports.so transports/transports.abi3.so
+endif
+
 build:  ## build the library
 	maturin build
+
+build-sdist:  ## build the sdist
+	maturin sdist
+
+dev: build  ## lightweight in-place build
+	$(_CP_COMMAND)
 
 develop:  ## build the library for development
 	pip install -U build maturin setuptools twine wheel
@@ -13,10 +26,12 @@ lint:  ## run linters
 
 fix:  ## run autofixers
 	python -m ruff transports --fix
+
 format: fix
 
 tests:  ## run tests
 	python -m pytest -v transports/tests --junitxml=junit.xml --cov=transports --cov-branch --cov-fail-under=65 --cov-report term-missing --cov-report xml
+
 tests: test
 
 checks:  ## run checks
@@ -24,6 +39,12 @@ checks:  ## run checks
 
 clean:  ## clean the project
 	git clean -fdx
+
+dist: clean build build-sdist  ## create dists
+	python -m twine check target/wheels/*
+
+publish: dist  ## dist to pypi
+	python -m twine upload target/wheels/* --skip-existing
 
 # Thanks to Francoise at marmelab.com for this
 help:
