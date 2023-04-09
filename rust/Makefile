@@ -33,7 +33,7 @@ tests-ci: $(eval SHELL:=/bin/bash)
 		export RUSTDOCFLAGS="-Cpanic=abort";\
 		export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort";\
 		cargo test -- -Z unstable-options --format json | cargo2junit > junit.xml;\
-	  grcov . --llvm -s . -t cobertura --branch --ignore-not-existing -o ./coverage.xml;\
+		grcov . --llvm -s . -t cobertura --branch --ignore-not-existing -o ./coverage.xml;\
 	}
 
 
