@@ -1,5 +1,5 @@
 [build-system]
-requires = ["maturin>=0.13,<0.14"]
+requires = ["maturin>=1,<2"]
 build-backend = "maturin"
 
 [project]
@@ -28,7 +28,7 @@ dependencies = [
     "aiostream",
     "bigbrother",
     "orjson",
-    "pydantic",
+    "pydantic<2",
     "starlette",
     "udatetime",
     "uvicorn",
@@ -40,7 +40,7 @@ develop = [
     "black>=23",
     "bump2version",
     "check-manifest",
-    "maturin",
+    "maturin>=1,<2",
     "pytest",
     "pytest-cov",
     "ruff",
