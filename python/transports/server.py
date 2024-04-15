@@ -1,5 +1,6 @@
 from asyncio import gather
 from typing import Type
+
 from .connection import Connection
 from .model import BaseModel
 from .transport import Transport

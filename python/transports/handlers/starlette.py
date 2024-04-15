@@ -1,9 +1,10 @@
 from contextlib import contextmanager
 from starlette.websockets import WebSocket, WebSocketDisconnect
 from typing import Type
-from ..server import Server
-from ..model import BaseModel
+
 from ..json import JSONTransport
+from ..model import BaseModel
+from ..server import Server
 
 
 class StarletteWebSocketServer(Server):

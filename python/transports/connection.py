@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from typing import Optional, Type
+
 from .transport import Transport
 from .update import Update
 
@@ -47,17 +48,13 @@ class Connection(ABC):
                 await self.send(update)
 
     @abstractmethod
-    async def connect(self, client_id: Optional[str] = None) -> str:
-        ...
+    async def connect(self, client_id: Optional[str] = None) -> str: ...
 
     @abstractmethod
-    async def disconnect(self) -> None:
-        ...
+    async def disconnect(self) -> None: ...
 
     @abstractmethod
-    async def receive(self) -> Update:
-        ...
+    async def receive(self) -> Update: ...
 
     @abstractmethod
-    async def send(self, update: Update) -> None:
-        ...
+    async def send(self, update: Update) -> None: ...

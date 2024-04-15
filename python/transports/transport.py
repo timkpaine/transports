@@ -1,7 +1,8 @@
 from abc import ABCMeta
-from asyncio import get_event_loop, run_coroutine_threadsafe, AbstractEventLoop
-from typing import Dict, Optional, Type
+from asyncio import AbstractEventLoop, get_event_loop, run_coroutine_threadsafe
+from typing import Dict, Optional, Type, get_args, get_origin
 from uuid import uuid4
+
 from .model import BaseModel
 from .update import Update
 
@@ -143,8 +144,10 @@ class Transport(ThreadedMixin, metaclass=ABCMeta):
 
         # recursively descent types and register any other models we find
         for value_type in model_type._walk_types():
-            if isinstance(value_type, type) and issubclass(value_type, BaseModel) and value_type.__name__ not in self.model_map:
-                self.hosts(value_type)
+            types_to_process = get_args(value_type) + (get_origin(value_type),) + (value_type,)
+            for type_to_process in types_to_process:
+                if isinstance(type_to_process, type) and issubclass(type_to_process, BaseModel) and type_to_process.__name__ not in self.model_map:
+                    self.hosts(type_to_process)
 
     async def connect(self):
         # TODO

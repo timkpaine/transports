@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: build develop clean help lint fix format tests test 
+.PHONY: build develop clean help lint fix format tests test
 
 UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
@@ -22,17 +22,19 @@ develop:  ## build the library for development
 	pip install -e .[develop]
 
 lint:  ## run linters
-	python -m ruff transports
+	python -m isort transports --check
+	python -m ruff check transports
 
 fix:  ## run autofixers
-	python -m ruff transports --fix
+	python -m isort transports
+	python -m ruff format transports
 
 format: fix
 
 tests:  ## run tests
 	python -m pytest -v transports/tests --junitxml=junit.xml --cov=transports --cov-branch --cov-fail-under=65 --cov-report term-missing --cov-report xml
 
-tests: test
+test: tests
 
 checks:  ## run checks
 	# python -m check_manifest
