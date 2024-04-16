@@ -1,23 +1,9 @@
-from .model import (
-    BaseModel,
-    # ListModel,
-    # DictModel,
-    Field,
-    PrivateAttr,
-)
+from .exceptions import UpdateMalformed
+from .handlers import AioHttpWebSocketClient, StarletteWebSocketServer  # handlers; clients
+from .json import JSONTransport
+from .model import BaseModel, Field, PrivateAttr  # ListModel,; DictModel,
 from .transport import Transport
 from .update import Update
-
-from .json import JSONTransport
-from .exceptions import UpdateMalformed
-
-from .handlers import (
-    # handlers
-    StarletteWebSocketServer,
-    # clients
-    AioHttpWebSocketClient,
-)
-
 
 __version__ = "0.1.2"
 

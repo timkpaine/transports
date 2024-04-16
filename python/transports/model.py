@@ -1,13 +1,9 @@
-import pydantic
 from asyncio import Queue
 from collections import deque
 from datetime import datetime
-from udatetime import utcnow
-from pydantic import BaseModel as PydanticBaseModel, Field, PrivateAttr  # noqa: F401
-from typing import Any, Optional, TYPE_CHECKING
+from pydantic import BaseModel as PydanticBaseModel, Field, PrivateAttr, root_validator  # noqa: F401
+from typing import TYPE_CHECKING, Any, Optional
 from uuid import uuid4
-from .utils import orjson_dumps, orjson_loads
-
 
 if TYPE_CHECKING:
     from .transport import Transport
@@ -30,45 +26,20 @@ class BaseModel(PydanticBaseModel):
     # TODO make threadsafe
     _out_queue: Queue["Update"] = PrivateAttr(default_factory=Queue)
 
-    @pydantic.validator("id", pre=True, always=True)
-    def default_id(cls, v, *, values, **kwargs):
-        return v or str(uuid4())
-
-    @pydantic.validator("name", pre=True, always=True)
-    def default_name(cls, v, *, values, **kwargs):
-        return v or values["id"]
-
-    @pydantic.validator("created", pre=True, always=True)
-    def default_created(cls, v):
-        return v or utcnow()
-
-    @pydantic.validator("modified", pre=True, always=True)
-    def default_modified(cls, v, *, values, **kwargs):
-        return v or values["created"]
+    @root_validator(pre=True)
+    @classmethod
+    def apply_validation(cls, values):
+        values["id"] = values.get("id", str(uuid4()))
+        values["name"] = values.get("name", values["id"])
+        values["created"] = values.get("created", datetime.utcnow())
+        values["modified"] = values.get("modified", values["created"])
+        return values
 
     # pydantic configuration
     class Config:
-        # any types
         arbitrary_types_allowed = True
-
-        # allow mutation (see frozen as well)
-        allow_mutation = True
-
-        # pass around models by ref
-        copy_on_model_validation = "none"
-
-        # no undeclared fields
+        from_attributes = True
         extra = "forbid"
-
-        # not frozen
-        # frozen = False
-
-        # access by attr
-        orm_mode = True
-
-        # json_encoders = {}
-        json_dumps = orjson_dumps
-        json_loads = orjson_loads
 
     def __hash__(self):
         return hash(self.id)
@@ -96,7 +67,7 @@ class BaseModel(PydanticBaseModel):
             copied.id = str(uuid4())
 
             # overload last_updated
-            copied.modified = utcnow()
+            copied.modified = datetime.utcnow()
 
             if freeze:
                 # make readonly
@@ -109,7 +80,7 @@ class BaseModel(PydanticBaseModel):
     def _walk_types(cls):
         for field in cls.__fields__.values():
             # TODO is this good enough?
-            yield field.type_
+            yield field.annotation
 
     # transport layer
     _transport: "Transport" = PrivateAttr(default=None)

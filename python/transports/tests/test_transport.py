@@ -1,15 +1,14 @@
-import time
 import pytest
-from typing import List, Dict
-from transports import Transport, BaseModel
+import time
+from typing import Dict, List
+
+from transports import BaseModel, Transport
 
 
-class MyModel(BaseModel):
-    ...
+class MyModel(BaseModel): ...
 
 
-class MyOtherModel(BaseModel):
-    ...
+class MyOtherModel(BaseModel): ...
 
 
 class MyParentModel(BaseModel):
