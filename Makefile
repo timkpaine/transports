@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: develop-py develop-js develop-rust develop build-js build-py build-rust build lint-py lint-js lint-rust lint fix-py fix-js fix-rust fix checks-py checks-js checks-rust checks tests-py tests-js tests-rust tests test tests-ci help
+.PHONY: develop-py develop-js develop-rust develop build-js build-py build-rust build lint-py lint-js lint-rust lint fix-py fix-js fix-rust fix checks-py checks-js checks-rust checks tests-py tests-js tests-rust tests test coverage-py coverage-rust coverage help
 
 develop-py:
 	make -C python develop
@@ -68,10 +68,13 @@ tests-rust:
 tests: tests-rust tests-js tests-py  ## Run the tests
 test: tests
 
-tests-ci-rust:
-	make -C rust tests-ci
+coverage-py:
+	make -C python coverage
 
-tests-ci: tests-ci-rust tests-py tests-js
+coverage-rust:
+	make -C rust coverage
+
+coverage: coverage-rust coverage-py tests-js
 
 # Thanks to Francoise at marmelab.com for this
 help:

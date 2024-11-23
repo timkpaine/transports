@@ -1,14 +1,13 @@
 .DEFAULT_GOAL := help
-.PHONY: dev build lint fix check tests tests-ci develop test format checks help
+.PHONY: dev build lint fix check tests coverage develop test format checks help
 
 dev:  ## Install required dev dependencies
 	rustup component add rustfmt
 	rustup component add clippy
-	cargo install cargo2junit
-	cargo install grcov
+	cargo install cargo-nextest 
+	cargo install cargo-llvm-cov
 	cargo install -f wasm-bindgen-cli
 	rustup target add wasm32-unknown-unknown
-	rustup component add llvm-tools-preview
 
 build:  ## Build release
 	cargo build --release --all-features
@@ -24,19 +23,10 @@ check:
 	cargo check --all-features
 
 tests:  ## Run the tests
-	cargo test -- --show-output
-	# cargo test -- -Z unstable-options --format json | cargo2junit > junit.xml
+	cargo llvm-cov nextest --cobertura --output-path junit.xml
 
-tests-ci: $(eval SHELL:=/bin/bash)
-	{ \
-		export CARGO_INCREMENTAL=0;\
-		export RUSTDOCFLAGS="-Cpanic=abort";\
-		export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort";\
-		cargo test -- -Z unstable-options --format json | cargo2junit > junit.xml;\
-		grcov . --llvm -s . -t cobertura --branch --ignore-not-existing -o ./coverage.xml;\
-	}
-
-
+coverage:
+	cargo llvm-cov nextest --lcov --output-path coverage
 
 # aliases
 develop: dev
