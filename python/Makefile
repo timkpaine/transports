@@ -32,9 +32,13 @@ fix:  ## run autofixers
 format: fix
 
 tests:  ## run tests
-	python -m pytest -v transports/tests --junitxml=junit.xml --cov=transports --cov-branch --cov-fail-under=65 --cov-report term-missing --cov-report xml
+	python -m pytest -v transports/tests --junitxml=junit.xml
 
 test: tests
+
+coverage:  ## run tests with coverage
+	python -m pytest -v transports/tests --junitxml=junit.xml --cov=transports --cov-branch --cov-fail-under=65 --cov-report term-missing --cov-report xml
+
 
 checks:  ## run checks
 	# python -m check_manifest
