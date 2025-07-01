@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "transports"
-authors = [{name = "Tim Paine", email = "t.paine154@gmail.com"}]
+authors = [{name = "1kbgz", email = "dev@1kbgz.com"}]
 description="Generic communication library"
 version = "0.1.2"
 readme = "README.md"
@@ -55,8 +55,8 @@ test = [
 ]
 
 [project.urls]
-repository = "https://github.com/timkpaine/transports"
-homepage = "https://github.com/timkpaine/transports"
+repository = "https://github.com/1kbgz/transports"
+homepage = "https://github.com/1kbgz/transports"
 
 [tool.black]
 color = true
