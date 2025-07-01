@@ -1,11 +1,11 @@
 [package]
 name = "transports"
 version = "0.1.2"
-authors = ["timkpaine <t.paine154@gmail.com>"]
+authors = ["1kbgz <dev@1kbgz.com>"]
 edition = "2021"
 license = "Apache-2.0"
 readme = "../README.md"
-repository = "https://github.com/timkpaine/transports"
+repository = "https://github.com/1kbgz/transports"
 description = "Generic communication library"
 
 [lib]
