@@ -1,5 +1,6 @@
-from orjson import loads
 from typing import Optional, Type
+
+from orjson import loads
 
 from .exceptions import UpdateMalformed
 from .model import BaseModel

@@ -1,9 +1,10 @@
 from asyncio import Queue
 from collections import deque
 from datetime import datetime
-from pydantic import BaseModel as PydanticBaseModel, Field, PrivateAttr, root_validator  # noqa: F401
 from typing import TYPE_CHECKING, Any, Optional
 from uuid import uuid4
+
+from pydantic import BaseModel as PydanticBaseModel, Field, PrivateAttr, root_validator  # noqa: F401
 
 if TYPE_CHECKING:
     from .transport import Transport
