@@ -1,5 +1,6 @@
-from aiohttp import ClientSession, ClientWebSocketResponse
 from typing import Optional, Type
+
+from aiohttp import ClientSession, ClientWebSocketResponse
 
 from ..client import Client
 from ..json import JSONTransport

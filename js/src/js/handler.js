@@ -1,5 +1,5 @@
 /* eslint-disable */
-import {Client} from "./client";
+import { Client } from "./client";
 
 export class WebSocketClient extends Client {
   constructor(options = {}) {
@@ -40,11 +40,11 @@ export class WebSocketClient extends Client {
   async disconnect() {
     this._websocket.close();
   }
-  
+
   async _on_open() {
     this._connected = true;
   }
-  
+
   async _on_close(event) {
     this._connected = false;
     if (this._datacallback) {
@@ -82,7 +82,7 @@ export class WebSocketClient extends Client {
 
     // else, setup receiver
     this._datapromise = new Promise((resolve, reject) => {
-      this._datacallback = {resolve, reject};
+      this._datacallback = { resolve, reject };
     });
     return this._datapromise;
   }

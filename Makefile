@@ -1,82 +1,200 @@
-.DEFAULT_GOAL := help
-.PHONY: develop-py develop-js develop-rust develop build-js build-py build-rust build lint-py lint-js lint-rust lint fix-py fix-js fix-rust fix checks-py checks-js checks-rust checks tests-py tests-js tests-rust tests test coverage-py coverage-rust coverage help
-
+#########
+# BUILD #
+#########
+.PHONY: develop-py develop-js develop-rs develop
 develop-py:
-	make -C python develop
+	uv pip install -e .[develop]
 
-develop-js:
-	cd js; yarn
+develop-js: requirements-js
 
-develop-rust:
+develop-rs:
 	make -C rust develop
 
-develop: develop-rust develop-js develop-py  ## Setup project for development
+develop: develop-rs develop-js develop-py  ## setup project for development
+
+.PHONY: requirements-py requirements-js requirements-rs requirements
+requirements-py:  ## install prerequisite python build requirements
+	python -m pip install --upgrade pip toml
+	python -m pip install `python -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))'`
+	python -m pip install `python -c 'import toml; c = toml.load("pyproject.toml"); print(" ".join(c["project"]["optional-dependencies"]["develop"]))'`
+
+requirements-js:  ## install prerequisite javascript build requirements
+	cd js; pnpm install && npx playwright install
+
+requirements-rs:  ## install prerequisite rust build requirements
+	make -C rust requirements
+
+requirements: requirements-rs requirements-js requirements-py  ## setup project for development
+
+.PHONY: build-py build-js build-rs build
+build-py:
+	python -m build -w -n
 
 build-js:
-	cd js; yarn build
+	cd js; pnpm build
 
-build-py:
-	make -C python build
-
-build-rust:
+build-rs:
 	make -C rust build
 
-build: build-rust build-js build-py  ## Build the project
+build: build-rs build-js build-py  ## build the project
 
-lint-py:
-	make -C python lint
+.PHONY: install
+install:  ## install python library
+	uv pip install .
 
-lint-js:
-	cd js; yarn lint
+#########
+# LINTS #
+#########
+.PHONY: lint-py lint-js lint-rs lint-docs lint lints
+lint-py:  ## run python linter with ruff
+	python -m ruff check transports
+	python -m ruff format --check transports
 
-lint-rust:
+lint-js:  ## run js linter
+	cd js; pnpm lint
+
+lint-rs:  ## run rust linter
 	make -C rust lint
 
-lint: lint-rust lint-js lint-py  ## Run project linters
+lint-docs:  ## lint docs with mdformat and codespell
+	python -m mdformat --check README.md 
+	python -m codespell_lib README.md 
 
-fix-py:
-	make -C python fix
+lint: lint-rs lint-js lint-py lint-docs  ## run project linters
 
-fix-js:
-	cd js; yarn fix
+# alias
+lints: lint
 
-fix-rust:
+.PHONY: fix-py fix-js fix-rs fix-docs fix format
+fix-py:  ## fix python formatting with ruff
+	python -m ruff check --fix transports
+	python -m ruff format transports
+
+fix-js:  ## fix js formatting
+	cd js; pnpm fix
+
+fix-rs:  ## fix rust formatting
 	make -C rust fix
 
-fix: fix-rust fix-js fix-py  ## Run project autofixers
+fix-docs:  ## autoformat docs with mdformat and codespell
+	python -m mdformat README.md 
+	python -m codespell_lib --write README.md 
 
-checks-py:
-	make -C python checks
+fix: fix-rs fix-js fix-py fix-docs  ## run project autoformatters
 
-checks-js:
-	# noop
+# alias
+format: fix
 
-checks-rust:
-	make -C rust checks
+################
+# Other Checks #
+################
+.PHONY: check-manifest checks check
 
-checks: checks-rust checks-js checks-py  ## Run any other checks
+check-manifest:  ## check python sdist manifest with check-manifest
+	check-manifest -v
 
-tests-py:
-	make -C python tests
+checks: check-manifest
 
-tests-js:
-	cd js; yarn test
+# alias
+check: checks
 
-tests-rust:
-	make -C rust tests
+#########
+# TESTS #
+#########
+.PHONY: test-py tests-py coverage-py
+test-py:  ## run python tests
+	python -m pytest -v transports/tests
 
-tests: tests-rust tests-js tests-py  ## Run the tests
-test: tests
+# alias
+tests-py: test-py
 
-coverage-py:
-	make -C python coverage
+coverage-py:  ## run python tests and collect test coverage
+	python -m pytest -v transports/tests --cov=transports --cov-report term-missing --cov-report xml
 
-coverage-rust:
+.PHONY: test-js tests-js coverage-js
+test-js:  ## run js tests
+	cd js; pnpm test
+
+# alias
+tests-js: test-js
+
+coverage-js: test-js  ## run js tests and collect test coverage
+
+.PHONY: test-rs tests-rs coverage-rs
+test-rs:  ## run rust tests
+	make -C rust test
+
+# alias
+tests-rs: test-rs
+
+coverage-rs:  ## run rust tests and collect test coverage
 	make -C rust coverage
 
-coverage: coverage-rust coverage-py tests-js
+.PHONY: test coverage tests
+test: test-py test-js test-rs  ## run all tests
+coverage: coverage-py coverage-js coverage-rs  ## run all tests and collect test coverage
+
+# alias
+tests: test
+
+###########
+# VERSION #
+###########
+.PHONY: show-version patch minor major
+
+show-version:  ## show current library version
+	@bump-my-version show current_version
+
+patch:  ## bump a patch version
+	@bump-my-version bump patch
+
+minor:  ## bump a minor version
+	@bump-my-version bump minor
+
+major:  ## bump a major version
+	@bump-my-version bump major
+
+########
+# DIST #
+########
+.PHONY: dist-py-wheel dist-py-sdist dist-rs dist-check dist publish
+
+dist-py-wheel:  ## build python wheel
+	python -m cibuildwheel --output-dir dist
+
+dist-py-sdist:  ## build python sdist
+	python -m build --sdist -o dist
+
+dist-js:  # build js dists
+	cd js; pnpm pack
+
+dist-rs:  ## build rust dists
+	make -C rust dist
+
+dist-check:  ## run python dist checker with twine
+	python -m twine check dist/*
+
+dist: clean build dist-rs dist-js dist-py-wheel dist-py-sdist dist-check  ## build all dists
+
+publish: dist  ## publish python assets
+
+#########
+# CLEAN #
+#########
+.PHONY: deep-clean clean
+
+deep-clean: ## clean everything from the repository
+	git clean -fdx
+
+clean: ## clean the repository
+	rm -rf .coverage coverage cover htmlcov logs build dist *.egg-info
+
+############################################################################################
+
+.PHONY: help
 
 # Thanks to Francoise at marmelab.com for this
+.DEFAULT_GOAL := help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 

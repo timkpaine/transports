@@ -10,10 +10,10 @@ export class Transport {
   }
 
   hosts(model_type) {
-    if(!this.model_map.has(model_type.name)) {
+    if (!this.model_map.has(model_type.name)) {
       console.info(`Registering type: ${model_type.name}`);
       this.model_map.set(model_type.name, model_type);
-      
+
       // register any other models we find
       model_type.submodels().forEach((submodel_type) => {
         this.hosts(submodel_type);
@@ -30,15 +30,15 @@ export class Transport {
   async onInitial(update) {
     // TODO multi model and events
     const model = update.model;
-    
+
     // register in model map
     this.server_models.set(model.id, model);
-    
+
     // FIXME
     this.models.set("", model);
-    
+
     // return the instance
-    return model
+    return model;
   }
 
   // #################
@@ -46,8 +46,8 @@ export class Transport {
   // #################
   async send(client_id) {
     // grab model from client
-    const model = this.models.get(client_id)
-    
+    const model = this.models.get(client_id);
+
     // pull latest send update
     return await model.get(); // TODO unneeded await but better stack trace
   }
@@ -55,10 +55,8 @@ export class Transport {
   async receive(client_id, update) {
     // grab model from client
     const model = this.models.get(client_id);
-    
+
     // push update to model
     await model.receive(update);
   }
 }
-
-

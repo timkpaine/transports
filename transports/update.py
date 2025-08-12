@@ -1,7 +1,8 @@
 from datetime import datetime
-from pydantic import BaseModel as PydanticBaseModel, Field, PrivateAttr, root_validator  # noqa: F401
 from typing import Optional
 from uuid import uuid4
+
+from pydantic import BaseModel as PydanticBaseModel, Field, PrivateAttr, root_validator  # noqa: F401
 
 from .model import BaseModel
 
